@@ -51,17 +51,27 @@ def predict(network, x):
 
 x, t = get_data()
 network = init_network()
+
+batch_size = 100
 accuracy_cnt = 0
-for i in range(len(x)):
-    y = predict(network, x[i])
-    guess = np.argmax(y)
-    if guess == t[i]:
-        # print("correct!")
-        accuracy_cnt += 1
-    else:
-        re_normal = x[i].astype(np.float32)
-        re_normal *= 255.0
-        img_show(re_normal.reshape(28, 28))
-        print(f"wrong! Guess={guess}, ans={t[i]}")
-        input("Press button to continue: ")
+
+for i in range(0, len(x), batch_size):
+    print(i)
+    x_batch = x[i:i + batch_size]
+    y_batch = predict(network, x_batch)
+    guess = np.argmax(y_batch, axis=1)
+
+    accuracy_cnt += np.sum(guess == t[i:i + batch_size])
+
+    # y = predict(network, x[i])
+    # guess = np.argmax(y)
+    # if guess == t[i]:
+    #     # print("correct!")
+    #     accuracy_cnt += 1
+    # else:
+    #     re_normal = x[i].astype(np.float32)
+    #     re_normal *= 255.0
+    #     img_show(re_normal.reshape(28, 28))
+    #     print(f"wrong! Guess={guess}, ans={t[i]}")
+    #     input("Press button to continue: ")
 print(f"accuracy rate is: {accuracy_cnt / len(x)}")
